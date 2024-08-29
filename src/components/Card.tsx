@@ -27,7 +27,7 @@ const Card: React.FC<CardProps> = ({
   return (
     <Link
       href={`/${id}`}
-      className="bg-[#fefefe] shadow-lg rounded-xl overflow-hidden max-w-[300px] p-2 max-h-96"
+      className="bg-[#fefefe] shadow-lg rounded-xl overflow-hidden max-w-[300px] p-2 max-h-96 mx-auto"
     >
       <div className="relative">
         <Image
