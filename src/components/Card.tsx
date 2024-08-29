@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import Heart from "./Heart";
 
 interface CardProps {
   id: number;
@@ -26,15 +27,20 @@ const Card: React.FC<CardProps> = ({
   return (
     <Link
       href={`/${id}`}
-      className="bg-white shadow-lg rounded-xl overflow-hidden max-w-[300px] p-2 max-h-96"
+      className="bg-[#fefefe] shadow-lg rounded-xl overflow-hidden max-w-[300px] p-2 max-h-96"
     >
-      <Image
-        height={198}
-        width={278}
-        src={imageSrc}
-        alt={title}
-        className="object-cover rounded-xl"
-      />
+      <div className="relative">
+        <Image
+          height={198}
+          width={278}
+          src={imageSrc}
+          alt={title}
+          className="object-cover rounded-xl"
+        />
+         <div className="absolute -bottom-6 right-3">
+          <Heart/>
+         </div>
+      </div>
       <div className="p-2 flex flex-col gap-1">
         <div className="text-xs font-normal text-[#3F3F46]">{title}</div>
         <p className="mt-2 text-base font-medium leading-6 text-[#27272A]">

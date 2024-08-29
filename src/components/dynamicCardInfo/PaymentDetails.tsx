@@ -1,6 +1,13 @@
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+interface Customer {
+  name: string;
+  age: number;
+  contactNumber: string;
+  email: string;
+}
 
 const PaymentDetails = ({
   id,
@@ -12,21 +19,29 @@ const PaymentDetails = ({
   totalPersons: number;
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
-    string | null
-  >(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
+  const [customerDetails, setCustomerDetails] = useState<Customer | null>(null); // Updated type to Customer or null
   const router = useRouter();
   const pathName = usePathname();
 
-  const customerDetails = {
-    name: "John Doe",
-    age: 29,
-    email: "johndoe@example.com",
-    contactNumber: "+91 1234567890",
-  };
-
   const totalPrice = totalPersons * perPersonPrice;
 
+  useEffect(() => {
+    // Fetch customer details from localStorage
+    const personDetails = localStorage.getItem("customer");
+    console.log("Retrieved from localStorage:", personDetails); // Log the raw string
+  
+    if (personDetails) {
+      try {
+        const parsedDetails = JSON.parse(personDetails);
+        console.log("Parsed Customer Details:", parsedDetails); // Log the parsed object
+        setCustomerDetails(parsedDetails);
+      } catch (error) {
+        console.error("Error parsing customer details:", error); // Log any parsing errors
+      }
+    }
+  }, [totalPersons]);
+  
   const handlePaymentMethodChange = (method: string) => {
     setSelectedPaymentMethod((prevMethod) =>
       prevMethod === method ? null : method
@@ -36,6 +51,7 @@ const PaymentDetails = ({
   const handleBookNow = () => {
     if (selectedPaymentMethod) {
       setShowModal(true);
+      console.log(customerDetails);
     }
   };
 
@@ -44,11 +60,11 @@ const PaymentDetails = ({
   };
 
   const confirmBooking = () => {
-    router.push(`/${id}/booking-successful`);
+    router.push(`/${id}/booking-successfull`);
   };
 
   return (
-    <div className="bg-white p-4 xl:w-4/5 w-full mx-auto shadow-lg shadow-[#10182814] py-6 rounded-xl">
+    <div className="bg-white p-4 md:w-4/5 w-full mx-auto shadow-lg shadow-[#10182814] py-6 rounded-xl">
       <h3 className="text-lg font-semibold leading-6 mb-4">Payment Details</h3>
 
       <div className="flex flex-col gap-2">
@@ -91,7 +107,7 @@ const PaymentDetails = ({
 
       <div className="mt-6">
         <button
-          className={`px-16 py-4 font-semibold leading-6 w-fit rounded-full bg-[#0077CC] text-white ${
+          className={`px-10 py-4 font-semibold leading-6 w-fit rounded-full bg-[#0077CC] text-white ${
             !selectedPaymentMethod && " cursor-not-allowed"
           }`}
           onClick={handleBookNow}
@@ -105,16 +121,17 @@ const PaymentDetails = ({
         </p>
       </div>
 
-      {showModal && (
+      {showModal && customerDetails && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-md">
             <h2 className="text-xl font-semibold mb-4">Booking Confirmation</h2>
-            <p className="mb-2">Name: {customerDetails.name}</p>
-            <p className="mb-2">Age: {customerDetails.age}</p>
-            <p className="mb-2">Email: {customerDetails.email}</p>
-            <p className="mb-4">
-              Contact Number: {customerDetails.contactNumber}
-            </p>
+            <div className="mb-4">
+              <h3 className="text-base font-semibold leading-6">Customer Details</h3>
+              <p className="mb-2">Name: {customerDetails.name}</p>
+              <p className="mb-2">Age: {customerDetails.age}</p>
+              <p className="mb-2">Email: {customerDetails.email}</p>
+              <p className="mb-2">Contact Number: {customerDetails.contactNumber}</p>
+            </div>
             <h3 className="text-lg font-semibold mb-2">Pricing Details</h3>
             <PaymentDetailItem
               label="Trip price per person"
